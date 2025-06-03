@@ -8,7 +8,7 @@ export interface ValidationResult {
 
 export function validateDelta(jsonString: string): ValidationResult {
   if (!jsonString.trim()) {
-    return { isValid: false, error: 'JSON input is empty' };
+    return { isValid: false};
   }
 
   try {

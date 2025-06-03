@@ -35,7 +35,7 @@ export function DeltaInput({ value, onChange, className = '' }: DeltaInputProps)
   }, [onChange, validation]);
 
   const handleClear = useCallback(() => {
-    onChange('', { isValid: false, error: 'JSON input is empty' });
+    onChange('', { isValid: false });
   }, [onChange]);
 
   const handleFormat = useCallback(() => {
