@@ -7,6 +7,7 @@ import { QuillRenderer } from '@/components/delta/QuillRenderer';
 import { EditModeToggle } from '@/components/EditModeToggle';
 import { ImportExport } from '@/components/ImportExport';
 import { HelpModal } from '@/components/HelpModal';
+import { ReactQuillTest } from '@/components/ReactQuillTest';
 import { QuillDelta } from '@/types/quill';
 import { ValidationResult } from '@/lib/deltaValidation';
 
@@ -42,6 +43,11 @@ export default function Home() {
 
   const leftPanel = (
     <div className="h-full flex flex-col">
+      {/* React Quill Test */}
+      <div className="p-4 border-b border-border">
+        <ReactQuillTest />
+      </div>
+      
       {/* Import/Export Section */}
       <div className="p-4 border-b border-border">
         <ImportExport
