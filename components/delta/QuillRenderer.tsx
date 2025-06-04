@@ -77,6 +77,15 @@ export function QuillRenderer({
           if (attrs.italic) {
             listItemContent = <em>{listItemContent}</em>;
           }
+          if (attrs.underline) {
+            listItemContent = <u>{listItemContent}</u>;
+          }
+          if (attrs.strike) {
+            listItemContent = <s>{listItemContent}</s>;
+          }
+          if (attrs.code) {
+            listItemContent = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{text}</code>;
+          }
           if (attrs.link) {
             listItemContent = <a href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{text}</a>;
           }
@@ -124,6 +133,27 @@ export function QuillRenderer({
           }
           if (attrs.header === 3) {
             element = <h3 key={index} className="text-lg font-bold mb-2 mt-2">{text}</h3>;
+          }
+          if (attrs.blockquote) {
+            element = <blockquote key={index} className="border-l-4 border-muted-foreground/30 pl-4 my-2 italic text-muted-foreground">{text}</blockquote>;
+          }
+          if (attrs['code-block']) {
+            element = <pre key={index} className="bg-muted p-3 rounded font-mono text-sm overflow-x-auto my-2"><code>{text}</code></pre>;
+          }
+          if (attrs.align) {
+            const alignClass = attrs.align === 'center' ? 'text-center' : 
+                              attrs.align === 'right' ? 'text-right' : 
+                              attrs.align === 'justify' ? 'text-justify' : 'text-left';
+            element = <div key={index} className={alignClass}>{element}</div>;
+          }
+          if (attrs.underline) {
+            element = <u>{element}</u>;
+          }
+          if (attrs.strike) {
+            element = <s>{element}</s>;
+          }
+          if (attrs.code) {
+            element = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{element}</code>;
           }
           if (attrs.link) {
             element = <a key={index} href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{text}</a>;
