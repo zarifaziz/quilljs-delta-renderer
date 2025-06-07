@@ -1,27 +1,19 @@
 'use client';
 
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { QuillDelta } from '@/types/quill';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Edit, Eye } from 'lucide-react';
 
 interface QuillRendererProps {
   delta: QuillDelta | null;
-  readOnly?: boolean;
-  onChange?: (delta: QuillDelta) => void;
   className?: string;
 }
 
 export function QuillRenderer({ 
   delta, 
-  readOnly = true, 
-  onChange,
   className = '' 
 }: QuillRendererProps) {
-  const [isEditing, setIsEditing] = useState(false);
 
-  // Simple function to render Delta operations as HTML
+  // Function to render Delta operations as HTML
   const renderDeltaAsHtml = (delta: QuillDelta | null) => {
     if (!delta || !delta.ops) {
       return (
@@ -181,7 +173,7 @@ export function QuillRenderer({
         const embedObj = op.insert as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
         if (embedObj.image) {
           elements.push(
-            <Image 
+            <img 
               key={index} 
               src={embedObj.image} 
               alt="Embedded content" 
@@ -218,84 +210,11 @@ export function QuillRenderer({
     );
   };
 
-  // Simple edit mode using textarea for now (can be upgraded to full Quill later)
-  const renderEditableContent = (delta: QuillDelta | null) => {
-    const deltaJson = delta ? JSON.stringify(delta, null, 2) : '';
-    
-    return (
-      <div className="space-y-4">
-        <div className="bg-muted/30 p-3 rounded border">
-          <p className="text-sm text-muted-foreground mb-2">
-            ⚠️ Edit mode is simplified - editing the JSON directly. 
-            Future versions will include rich text editing.
-          </p>
-        </div>
-        <textarea
-          value={deltaJson}
-          onChange={(e) => {
-            try {
-              const newDelta = JSON.parse(e.target.value);
-              if (onChange) onChange(newDelta);
-            } catch {
-              // Invalid JSON, ignore for now
-            }
-          }}
-          className="w-full h-64 p-3 border rounded font-mono text-sm resize-none"
-          placeholder="Edit Delta JSON here..."
-        />
-      </div>
-    );
-  };
-
   return (
     <div className={`h-full flex flex-col ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h2 className="text-lg font-semibold">Delta Preview</h2>
-        <div className="flex items-center gap-3">
-          <div className="text-sm text-muted-foreground flex items-center gap-1">
-            {readOnly ? (
-              <>
-                <Eye className="h-4 w-4" />
-                Read-only
-              </>
-            ) : isEditing ? (
-              <>
-                <Edit className="h-4 w-4" />
-                Editing
-              </>
-            ) : (
-              <>
-                <Eye className="h-4 w-4" />
-                Preview
-              </>
-            )}
-          </div>
-          {!readOnly && (
-            <Button
-              variant={isEditing ? "default" : "outline"}
-              size="sm"
-              onClick={() => setIsEditing(!isEditing)}
-            >
-              {isEditing ? (
-                <>
-                  <Eye className="h-4 w-4 mr-1" />
-                  Preview
-                </>
-              ) : (
-                <>
-                  <Edit className="h-4 w-4 mr-1" />
-                  Edit
-                </>
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
-
       {/* Content Area */}
       <div className="flex-1 min-h-0 overflow-auto p-4">
-        {!readOnly && isEditing ? renderEditableContent(delta) : renderDeltaAsHtml(delta)}
+        {renderDeltaAsHtml(delta)}
       </div>
 
       {/* Status bar */}

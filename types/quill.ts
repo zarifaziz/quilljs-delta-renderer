@@ -10,7 +10,6 @@ export interface QuillDelta {
 export interface AppState {
   deltaInput: string;
   isValidJson: boolean;
-  isEditable: boolean;
   currentDelta: QuillDelta | null;
   errorMessage: string | null;
 }
