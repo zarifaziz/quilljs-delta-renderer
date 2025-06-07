@@ -9,7 +9,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { HelpCircle, ExternalLink, Edit, Eye, Upload, RefreshCw } from 'lucide-react';
+import { HelpCircle, ExternalLink, Upload, RefreshCw, Eye } from 'lucide-react';
 import { useState } from 'react';
 
 export function HelpModal() {
@@ -27,10 +27,10 @@ export function HelpModal() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <HelpCircle className="h-5 w-5" />
-            Quill Delta Renderer Help
+            QuillJS Delta Renderer Help
           </DialogTitle>
           <DialogDescription>
-            Learn how to use the Quill Delta Renderer effectively
+            Learn how to use the QuillJS Delta Renderer effectively
           </DialogDescription>
         </DialogHeader>
         
@@ -57,14 +57,14 @@ export function HelpModal() {
           <section>
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
               <span className="h-2 w-2 bg-primary rounded-full"></span>
-              Basic Usage
+              How to Use
             </h3>
             <div className="bg-muted/50 p-4 rounded-lg">
               <ol className="list-decimal pl-5 space-y-3">
                 <li className="flex items-start gap-3">
                   <span className="text-sm">1.</span>
                   <div>
-                    <strong>Paste Delta JSON</strong> in the editor on the left panel
+                    <strong>Enter Delta JSON</strong> in the editor on the left panel
                     <p className="text-sm text-muted-foreground mt-1">
                       Use the examples dropdown for quick testing
                     </p>
@@ -82,18 +82,18 @@ export function HelpModal() {
                 <li className="flex items-start gap-3">
                   <span className="text-sm">3.</span>
                   <div>
-                    <strong>Toggle edit mode</strong> to make changes
+                    <strong>Import/Export</strong> Delta files
                     <p className="text-sm text-muted-foreground mt-1">
-                      Switch between read-only and editable modes
+                      Save or load Delta JSON files for sharing
                     </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-sm">4.</span>
                   <div>
-                    <strong>Import/Export</strong> Delta files
+                    <strong>Copy to clipboard</strong> for use in other applications
                     <p className="text-sm text-muted-foreground mt-1">
-                      Save or load Delta JSON files for sharing
+                      Use the copy button or keyboard shortcut
                     </p>
                   </div>
                 </li>
@@ -110,7 +110,7 @@ export function HelpModal() {
             <div className="bg-muted/50 p-4 rounded-lg space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <h4 className="font-medium">Left Panel</h4>
+                  <h4 className="font-medium">Left Panel - Delta Input</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Upload className="h-4 w-4" />
@@ -127,19 +127,19 @@ export function HelpModal() {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <h4 className="font-medium">Right Panel</h4>
+                  <h4 className="font-medium">Right Panel - Delta Preview</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Eye className="h-4 w-4" />
-                      <span>Edit mode toggle</span>
+                      <span>Read-only rendered content</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Preview</span>
-                      <span>Rendered Delta content</span>
+                      <span>Formatted Delta content display</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Edit className="h-4 w-4" />
-                      <span>Edit mode (JSON textarea)</span>
+                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Status</span>
+                      <span>Operation count and render status</span>
                     </div>
                   </div>
                 </div>
@@ -157,22 +157,22 @@ export function HelpModal() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span>Toggle Edit Mode</span>
-                    <kbd className="px-2 py-1 bg-background border rounded text-sm">Ctrl+E</kbd>
-                  </div>
-                  <div className="flex items-center justify-between">
                     <span>Import File</span>
                     <kbd className="px-2 py-1 bg-background border rounded text-sm">Ctrl+O</kbd>
                   </div>
-                </div>
-                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span>Export File</span>
                     <kbd className="px-2 py-1 bg-background border rounded text-sm">Ctrl+S</kbd>
                   </div>
+                </div>
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span>Copy to Clipboard</span>
                     <kbd className="px-2 py-1 bg-background border rounded text-sm">Ctrl+Shift+C</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Open Help</span>
+                    <kbd className="px-2 py-1 bg-background border rounded text-sm">F1</kbd>
                   </div>
                 </div>
               </div>
@@ -308,15 +308,15 @@ export function HelpModal() {
           <section>
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
               <span className="h-2 w-2 bg-green-500 rounded-full"></span>
-              Version & Support
+              About This Tool
             </h3>
             <div className="bg-muted/50 p-4 rounded-lg space-y-2">
               <p className="text-sm">
-                <strong>Quill Delta Renderer</strong> - Built with Next.js, React, and shadcn/ui
+                <strong>QuillJS Delta Renderer</strong> - Built with Next.js, React, and shadcn/ui
               </p>
               <p className="text-sm text-muted-foreground">
-                This tool is designed for viewing and testing Quill Delta JSON objects. 
-                For full rich text editing capabilities, consider using Quill.js directly in your application.
+                This tool is designed for viewing and testing Quill Delta JSON objects in a read-only format. 
+                Perfect for debugging, sharing, and understanding Delta structure and formatting.
               </p>
             </div>
           </section>
