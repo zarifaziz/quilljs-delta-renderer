@@ -108,35 +108,17 @@ export function QuillRenderer({
           }
           
           // Handle regular text elements
-          let element = <span key={index}>{text}</span>;
+          let element: ReactNode = text;
           
-          // Apply formatting
+          // Apply inline formatting in the correct order, chaining them
+          if (attrs.code) {
+            element = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{element}</code>;
+          }
           if (attrs.bold) {
-            element = <strong key={index}>{text}</strong>;
+            element = <strong>{element}</strong>;
           }
           if (attrs.italic) {
-            element = <em key={index}>{element}</em>;
-          }
-          if (attrs.header === 1) {
-            element = <h1 key={index} className="text-2xl font-bold mb-2 mt-4">{text}</h1>;
-          }
-          if (attrs.header === 2) {
-            element = <h2 key={index} className="text-xl font-bold mb-2 mt-3">{text}</h2>;
-          }
-          if (attrs.header === 3) {
-            element = <h3 key={index} className="text-lg font-bold mb-2 mt-2">{text}</h3>;
-          }
-          if (attrs.blockquote) {
-            element = <blockquote key={index} className="border-l-4 border-muted-foreground/30 pl-4 my-2 italic text-muted-foreground">{text}</blockquote>;
-          }
-          if (attrs['code-block']) {
-            element = <pre key={index} className="bg-muted p-3 rounded font-mono text-sm overflow-x-auto my-2"><code>{text}</code></pre>;
-          }
-          if (attrs.align) {
-            const alignClass = attrs.align === 'center' ? 'text-center' : 
-                              attrs.align === 'right' ? 'text-right' : 
-                              attrs.align === 'justify' ? 'text-justify' : 'text-left';
-            element = <div key={index} className={alignClass}>{element}</div>;
+            element = <em>{element}</em>;
           }
           if (attrs.underline) {
             element = <u>{element}</u>;
@@ -144,26 +126,84 @@ export function QuillRenderer({
           if (attrs.strike) {
             element = <s>{element}</s>;
           }
-          if (attrs.code) {
-            element = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{element}</code>;
-          }
           if (attrs.link) {
-            element = <a key={index} href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{text}</a>;
+            element = <a href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{element}</a>;
           }
           
-          // Handle line breaks
+          // Handle block-level formatting
+          if (attrs.header === 1) {
+            element = <h1 key={index} className="text-2xl font-bold mb-2 mt-4">{element}</h1>;
+          } else if (attrs.header === 2) {
+            element = <h2 key={index} className="text-xl font-bold mb-2 mt-3">{element}</h2>;
+          } else if (attrs.header === 3) {
+            element = <h3 key={index} className="text-lg font-bold mb-2 mt-2">{element}</h3>;
+          } else if (attrs.blockquote) {
+            element = <blockquote key={index} className="border-l-4 border-muted-foreground/30 pl-4 my-2 italic text-muted-foreground">{element}</blockquote>;
+          } else if (attrs['code-block']) {
+            element = <pre key={index} className="bg-muted p-3 rounded font-mono text-sm overflow-x-auto my-2"><code>{element}</code></pre>;
+          } else {
+            // Wrap in span with key for regular text
+            element = <span key={index}>{element}</span>;
+          }
+          
+          // Handle alignment
+          if (attrs.align) {
+            const alignClass = attrs.align === 'center' ? 'text-center' : 
+                              attrs.align === 'right' ? 'text-right' : 
+                              attrs.align === 'justify' ? 'text-justify' : 'text-left';
+            element = <div key={`${index}-align`} className={alignClass}>{element}</div>;
+          }
+          
+          // Handle line breaks while preserving formatting
           if (text.includes('\n')) {
             const parts = text.split('\n');
-            element = (
-              <span key={index}>
-                {parts.map((part, i) => (
-                  <span key={i}>
-                    {part}
-                    {i < parts.length - 1 && <br />}
-                  </span>
-                ))}
-              </span>
-            );
+            
+            // Apply formatting to each part and handle line breaks
+            const formattedParts = parts.map((part, i) => {
+              let partElement: ReactNode = part;
+              
+              // Apply the same inline formatting to each part
+              if (attrs.code) {
+                partElement = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{partElement}</code>;
+              }
+              if (attrs.bold) {
+                partElement = <strong>{partElement}</strong>;
+              }
+              if (attrs.italic) {
+                partElement = <em>{partElement}</em>;
+              }
+              if (attrs.underline) {
+                partElement = <u>{partElement}</u>;
+              }
+              if (attrs.strike) {
+                partElement = <s>{partElement}</s>;
+              }
+              if (attrs.link) {
+                partElement = <a href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{partElement}</a>;
+              }
+              
+              return (
+                <span key={i}>
+                  {partElement}
+                  {i < parts.length - 1 && <br />}
+                </span>
+              );
+            });
+            
+            // For block-level elements, wrap the formatted parts
+            if (attrs.header === 1) {
+              element = <h1 key={index} className="text-2xl font-bold mb-2 mt-4">{formattedParts}</h1>;
+            } else if (attrs.header === 2) {
+              element = <h2 key={index} className="text-xl font-bold mb-2 mt-3">{formattedParts}</h2>;
+            } else if (attrs.header === 3) {
+              element = <h3 key={index} className="text-lg font-bold mb-2 mt-2">{formattedParts}</h3>;
+            } else if (attrs.blockquote) {
+              element = <blockquote key={index} className="border-l-4 border-muted-foreground/30 pl-4 my-2 italic text-muted-foreground">{formattedParts}</blockquote>;
+            } else if (attrs['code-block']) {
+              element = <pre key={index} className="bg-muted p-3 rounded font-mono text-sm overflow-x-auto my-2"><code>{formattedParts}</code></pre>;
+            } else {
+              element = <span key={index}>{formattedParts}</span>;
+            }
           }
           
           elements.push(element);
