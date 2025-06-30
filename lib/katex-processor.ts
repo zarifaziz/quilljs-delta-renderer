@@ -102,7 +102,7 @@ export function extractFormulas(text: string): Array<{type: 'inline' | 'block', 
   }
   
   // Extract inline formulas (excluding those that are part of block formulas)
-  let textWithoutBlocks = text.replace(/\$\$[\s\S]*?\$\$/g, '');
+  const textWithoutBlocks = text.replace(/\$\$[\s\S]*?\$\$/g, '');
   const inlineMatches = textWithoutBlocks.matchAll(/\$([^$\n]+?)\$/g);
   for (const match of inlineMatches) {
     formulas.push({
