@@ -118,5 +118,30 @@ export const sampleDeltas = {
       { insert: { image: 'https://via.placeholder.com/300x200' } },
       { insert: '\nImage caption goes here.\n' }
     ]
+  },
+  withFormulas: {
+    ops: [
+      { insert: 'Mathematical Formulas\n', attributes: { header: 1 } },
+      { insert: '\nInline formulas work great in text. For example, Einstein\'s famous equation ' },
+      { insert: '$E = mc^2$' },
+      { insert: ' shows the relationship between mass and energy.\n\nBlock formulas are displayed centered:\n\n' },
+      { insert: '$$\\int_0^1 x^2 dx = \\frac{1}{3}$$' },
+      { insert: '\n\nThe quadratic formula is another classic:\n\n' },
+      { insert: '$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$' },
+      { insert: '\n\nFormulas can also be mixed with formatting. Here\'s ' },
+      { insert: 'bold text', attributes: { bold: true } },
+      { insert: ' with a formula: ' },
+      { insert: '$\\alpha + \\beta = \\gamma$' },
+      { insert: ' in the same line.\n\nGreek letters and symbols:\n' },
+      { insert: '• Alpha: $\\alpha$\n', attributes: { list: 'bullet' } },
+      { insert: '• Beta: $\\beta$\n', attributes: { list: 'bullet' } },
+      { insert: '• Gamma: $\\gamma$\n', attributes: { list: 'bullet' } },
+      { insert: '• Pi: $\\pi$\n', attributes: { list: 'bullet' } },
+      { insert: '\nComplex expressions:\n\n' },
+      { insert: '$$\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}$$' },
+      { insert: '\n\nMatrix example:\n\n' },
+      { insert: '$$\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$$' },
+      { insert: '\n' }
+    ]
   }
 }; 

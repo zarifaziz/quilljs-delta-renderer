@@ -2,6 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import { QuillDelta } from '@/types/quill';
+import { processTextWithFormulas, containsFormulas, renderFormula } from '@/lib/katex-processor';
 
 interface QuillRendererProps {
   delta: QuillDelta | null;
@@ -12,6 +13,19 @@ export function QuillRenderer({
   delta, 
   className = '' 
 }: QuillRendererProps) {
+
+  // Helper function to render text with potential KaTeX formulas
+  const renderTextWithFormulas = (text: string): ReactNode => {
+    if (!containsFormulas(text)) {
+      return text;
+    }
+    
+    // Process the text to render formulas
+    const processedHtml = processTextWithFormulas(text);
+    
+    // Return as JSX using dangerouslySetInnerHTML for KaTeX rendered content
+    return <span dangerouslySetInnerHTML={{ __html: processedHtml }} />;
+  };
 
   // Function to render Delta operations as HTML
   const renderDeltaAsHtml = (delta: QuillDelta | null) => {
@@ -60,25 +74,31 @@ export function QuillRenderer({
           }
           
           // Add current item to list
-          let listItemContent = <span>{text}</span>;
+          let listItemContent = <span>{renderTextWithFormulas(text)}</span>;
+          
+          // Handle formula attribute in list items
+          if (attrs.formula) {
+            const formulaHtml = processTextWithFormulas(text);
+            listItemContent = <span dangerouslySetInnerHTML={{ __html: formulaHtml }} />;
+          }
           
           // Apply formatting to list item
-          if (attrs.bold) {
+          if (attrs.bold && !attrs.formula) {
             listItemContent = <strong>{text}</strong>;
           }
-          if (attrs.italic) {
+          if (attrs.italic && !attrs.formula) {
             listItemContent = <em>{listItemContent}</em>;
           }
-          if (attrs.underline) {
+          if (attrs.underline && !attrs.formula) {
             listItemContent = <u>{listItemContent}</u>;
           }
-          if (attrs.strike) {
+          if (attrs.strike && !attrs.formula) {
             listItemContent = <s>{listItemContent}</s>;
           }
-          if (attrs.code) {
+          if (attrs.code && !attrs.formula) {
             listItemContent = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{text}</code>;
           }
-          if (attrs.link) {
+          if (attrs.link && !attrs.formula) {
             listItemContent = <a href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{text}</a>;
           }
           
@@ -108,25 +128,32 @@ export function QuillRenderer({
           }
           
           // Handle regular text elements
-          let element: ReactNode = text;
+          let element: ReactNode = renderTextWithFormulas(text);
+          
+          // Handle formula attribute - if this is a formula, treat it specially
+          if (attrs.formula) {
+            // For formula attributes, render the formula directly
+            const formulaHtml = processTextWithFormulas(text);
+            element = <span dangerouslySetInnerHTML={{ __html: formulaHtml }} />;
+          }
           
           // Apply inline formatting in the correct order, chaining them
-          if (attrs.code) {
+          if (attrs.code && !attrs.formula) {
             element = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{element}</code>;
           }
-          if (attrs.bold) {
+          if (attrs.bold && !attrs.formula) {
             element = <strong>{element}</strong>;
           }
-          if (attrs.italic) {
+          if (attrs.italic && !attrs.formula) {
             element = <em>{element}</em>;
           }
-          if (attrs.underline) {
+          if (attrs.underline && !attrs.formula) {
             element = <u>{element}</u>;
           }
-          if (attrs.strike) {
+          if (attrs.strike && !attrs.formula) {
             element = <s>{element}</s>;
           }
-          if (attrs.link) {
+          if (attrs.link && !attrs.formula) {
             element = <a href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{element}</a>;
           }
           
@@ -160,25 +187,25 @@ export function QuillRenderer({
             
             // Apply formatting to each part and handle line breaks
             const formattedParts = parts.map((part, i) => {
-              let partElement: ReactNode = part;
+              let partElement: ReactNode = renderTextWithFormulas(part);
               
-              // Apply the same inline formatting to each part
-              if (attrs.code) {
+              // Apply the same inline formatting to each part (skip if formula)
+              if (attrs.code && !attrs.formula) {
                 partElement = <code className="bg-muted px-1 py-0.5 rounded text-sm font-mono">{partElement}</code>;
               }
-              if (attrs.bold) {
+              if (attrs.bold && !attrs.formula) {
                 partElement = <strong>{partElement}</strong>;
               }
-              if (attrs.italic) {
+              if (attrs.italic && !attrs.formula) {
                 partElement = <em>{partElement}</em>;
               }
-              if (attrs.underline) {
+              if (attrs.underline && !attrs.formula) {
                 partElement = <u>{partElement}</u>;
               }
-              if (attrs.strike) {
+              if (attrs.strike && !attrs.formula) {
                 partElement = <s>{partElement}</s>;
               }
-              if (attrs.link) {
+              if (attrs.link && !attrs.formula) {
                 partElement = <a href={attrs.link} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{partElement}</a>;
               }
               
@@ -209,9 +236,44 @@ export function QuillRenderer({
           elements.push(element);
         }
       } else if (typeof op.insert === 'object') {
-        // Handle embedded content like images
+        // Handle embedded content like images and formulas
         const embedObj = op.insert as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-        if (embedObj.image) {
+        
+        if (embedObj.formula) {
+          // Handle formula inserts
+          const attrs = op.attributes || {};
+          
+          // Build style object for the formula container
+          const containerStyle: React.CSSProperties = {};
+          if (attrs.size) {
+            containerStyle.fontSize = `${attrs.size}px`;
+          }
+          
+          let formulaElement: ReactNode = (
+            <span 
+              key={index} 
+              className="formula-container inline-block align-middle"
+              style={containerStyle}
+              dangerouslySetInnerHTML={{ __html: renderFormula(embedObj.formula, attrs.size) }}
+            />
+          );
+          
+          // Apply text formatting attributes to formula if present
+          if (attrs.bold) {
+            formulaElement = <strong key={`${index}-bold`}>{formulaElement}</strong>;
+          }
+          if (attrs.italic) {
+            formulaElement = <em key={`${index}-italic`}>{formulaElement}</em>;
+          }
+          if (attrs.underline) {
+            formulaElement = <u key={`${index}-underline`}>{formulaElement}</u>;
+          }
+          if (attrs.strike) {
+            formulaElement = <s key={`${index}-strike`}>{formulaElement}</s>;
+          }
+          
+          elements.push(formulaElement);
+        } else if (embedObj.image) {
           elements.push(
             <img 
               key={index} 

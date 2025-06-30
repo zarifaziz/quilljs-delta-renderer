@@ -75,6 +75,7 @@ export function DeltaInput({ value, onChange, className = '' }: DeltaInputProps)
               <SelectItem value="simple">Simple</SelectItem>
               <SelectItem value="complex">Complex</SelectItem>
               <SelectItem value="withImage">With Image</SelectItem>
+              <SelectItem value="withFormulas">With Formulas</SelectItem>
             </SelectContent>
           </Select>
           
